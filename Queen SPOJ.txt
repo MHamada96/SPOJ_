@@ -1,0 +1,103 @@
+#include<iostream>
+
+#include<fstream>
+#include<istream>
+#include<ostream>
+
+#include<vector>
+#include<queue>
+#include<deque>
+#include<set>
+#include<map>
+
+#include<string>
+#include<cstring>
+#include<sstream>
+
+#include<cmath>
+#include <stdlib.h>
+#include<iomanip>
+#include<algorithm>
+#include<assert.h>
+
+using namespace std;
+
+#define PI 3.14159265
+
+int dx[] = { 0, 0, -1, 1, 1, 1, -1, -1 };
+int dy[] = { -1, 1, 0, 0, 1, -1, 1, -1 };
+
+void fast()
+{
+	std::ios_base::sync_with_stdio(0);
+	cin.tie(NULL);
+	cout.tie(NULL);
+}
+int n, m;
+int len[1009][1009];
+bool valid(int i, int j)
+{
+	return i >= 0 && j >= 0 && i < n && j < m;
+}
+int main()
+{
+	int T;
+	cin >> T;
+	while (T--)
+	{
+		cin >> n >> m;
+
+		// initilize the array , it's for length and visited 
+		memset(len, -1, sizeof len);
+		char grid[1009][1009];
+		pair<int, int> s, f;
+
+		// get input , determine start and fininsh points 
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < m; j++)
+			{
+				cin >> grid[i][j];
+				if (grid[i][j] == 'S')
+					s = make_pair(i, j);
+				if (grid[i][j] == 'F')
+					f = make_pair(i, j);
+			}
+		}
+		queue<pair<int, int> > q;
+
+		q.push(s);// push the root 
+		bool ok = true;
+		int dep = 0, sz;
+		len[s.first][s.second] = 0;
+
+		while (ok && !q.empty() && ++dep && (sz = q.size()))
+		{
+			while (sz--)
+			{
+				pair<int, int> node = q.front();
+				q.pop();
+				for (int i = 0; i < 8; i++)
+				{
+					int ii = node.first + dx[i];
+					int jj = node.second + dy[i];
+					if (valid(ii, jj) && grid[ii][jj] != 'X'&&len[ii][jj] == -1)
+					{
+						q.push(make_pair(ii, jj));
+						len[ii][jj] = dep;
+
+						if (f.first == ii&&f.second == jj)
+						{
+							ok = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (!ok)
+			cout << dep - 1 << endl;
+		else
+			cout << -1;
+	}
+}
